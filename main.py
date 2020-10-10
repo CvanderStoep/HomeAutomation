@@ -1,5 +1,6 @@
 from phue import Bridge
 import pandas as pd
+import matplotlib.pyplot as plt
 import time
 import datetime
 
@@ -72,12 +73,19 @@ while True:
     #     else:
     #         print('lights turned off')
 
+    sensors = bridge.get_sensor_objects('id')
+    temp_sensor_gang1 = sensors[75].state['temperature'] / 100  # temp in degC
+    temp_sensor_toilet = sensors[17].state['temperature'] / 100
+    temp_sensor_zolder = sensors[8].state['temperature'] / 100
+
+
     new_data = {'DateTime':datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
                     'T_gang':temp_sensor_gang1,
                     'T_toilet':temp_sensor_toilet,
                     'T_zolder':temp_sensor_zolder}
     df = df.append(new_data, ignore_index=True)
     print(df)
+    print('T-zolder last update: ', sensors[8].state['lastupdated'])
     time.sleep(60)
 
 
