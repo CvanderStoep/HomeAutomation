@@ -1,5 +1,7 @@
 from phue import Bridge
 import pandas as pd
+import time
+import datetime
 
 data = {'DateTime':[], 'T_gang':[], 'T_toilet':[], 'T_zolder':[]}
 df = pd.DataFrame(data)
@@ -62,13 +64,22 @@ if temp_sensor_zolder > 25:
 
 current_status = bridge.get_light(11, 'on')
 while True:
-    if current_status != bridge.get_light(11, 'on'):
-        print ('change in status')
-        current_status = bridge.get_light(11, 'on')
-        if current_status:
-            print('lights turned on')
-        else:
-            print('lights turned off')
+    # if current_status != bridge.get_light(11, 'on'):
+    #     print ('change in status')
+    #     current_status = bridge.get_light(11, 'on')
+    #     if current_status:
+    #         print('lights turned on')
+    #     else:
+    #         print('lights turned off')
+
+    new_data = {'DateTime':datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+                    'T_gang':temp_sensor_gang1,
+                    'T_toilet':temp_sensor_toilet,
+                    'T_zolder':temp_sensor_zolder}
+    df = df.append(new_data, ignore_index=True)
+    print(df)
+    time.sleep(60)
+
 
 
 
