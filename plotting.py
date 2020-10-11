@@ -2,6 +2,7 @@ from datetime import datetime
 from matplotlib import pyplot
 from matplotlib.animation import FuncAnimation
 from random import randrange
+import time
 
 x_data, y_data = [], []
 
