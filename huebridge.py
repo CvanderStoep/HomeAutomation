@@ -25,6 +25,7 @@ for x,y in huedictionary.items():
 lights = bridge.lights
 # print(lights)
 print()
+print()
 print('Output for all lights:')
 for light in lights:
     # if light.on:
