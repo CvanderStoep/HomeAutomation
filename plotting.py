@@ -6,10 +6,9 @@ import time
 
 x_data, y_data, z_data = [], [], []
 
-figure = pyplot.figure()
-line1, = pyplot.plot(x_data, y_data, 'r-o')
-line2, = pyplot.plot(x_data, z_data, 'b*--')
-
+figure, ax = pyplot.subplots()
+line1, = pyplot.plot(x_data, y_data,'r--o')
+line2, = pyplot.plot(x_data, z_data,'b*--')
 
 def update(frame):
     x_data.append(datetime.now())
@@ -18,8 +17,10 @@ def update(frame):
     line1.set_data(x_data, y_data)
     line2.set_data(x_data, z_data)
     pyplot.style.use("ggplot")
-    pyplot.plot(x_data, y_data, color = 'red')
-    pyplot.plot(x_data, z_data, color = 'yellow')
+    # pyplot.plot(x_data, y_data, color = 'red')
+    # pyplot.plot(x_data, z_data, color = 'yellow')
+    pyplot.plot(x_data, y_data,'r--o')
+    pyplot.plot(x_data, z_data, 'b*--')
     figure.gca().relim()
     figure.gca().autoscale_view()
     return [line1, line2]

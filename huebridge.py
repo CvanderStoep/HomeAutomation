@@ -9,6 +9,8 @@ from pathlib import Path
 from datetime import datetime
 from matplotlib import pyplot
 from matplotlib.animation import FuncAnimation
+import requests, json
+
 
 
 def initbridge():
@@ -61,6 +63,13 @@ def getsensors(sensortype):
     print('Temperature Sensor[75] - Gang 1e etage: ', temp_sensor_gang)
     return
 
+def getDelftweather():
+    complete_url = 'http://api.openweathermap.org/data/2.5/weather?appid=7d5fee11ffa54f01c926fea9ef45a27a&q=Delft'
+    response = requests.get(complete_url)
+    x = response.json()
+    y = x["main"]
+    current_temperature = y["temp"] - 273.15 #convert K to deg C
+    return current_temperature
 
 def update(frame):
     #activate the sensors and get the data
@@ -68,12 +77,14 @@ def update(frame):
     temp_sensor_gang = sensors[75].state['temperature'] / 100  # temp in degC
     temp_sensor_toilet = sensors[17].state['temperature'] / 100
     temp_sensor_zolder = sensors[8].state['temperature'] / 100
+    temp_Delft = getDelftweather() #get the current Temperature in Delft using OpenWeatherData
 
     #add new time and sensor temperature data to a .csv file
     new_data = {'DateTime': [datetime.now().strftime('%Y-%m-%d %H:%M:%S')],
                 'T_gang': [temp_sensor_gang],
                 'T_toilet': [temp_sensor_toilet],
-                'T_zolder': [temp_sensor_zolder]}
+                'T_zolder': [temp_sensor_zolder],
+                'T_Delft': [temp_Delft]}
     newdf = pd.DataFrame(new_data)  # only the latest data
     newdf.to_csv('hue_data.csv', mode='a', header=False)
     print('T-zolder last update: ', sensors[8].state['lastupdated'])
@@ -82,34 +93,40 @@ def update(frame):
     T_gang_data.append(temp_sensor_gang)
     T_zolder_data.append(temp_sensor_zolder)
     T_toilet_data.append(temp_sensor_toilet)
+    T_Delft_data.append(temp_Delft)
+
     line1.set_data(time_data, T_gang_data)
     line2.set_data(time_data, T_zolder_data)
     line3.set_data(time_data, T_toilet_data)
+    line4.set_data(time_data, T_Delft_data)
+
     pyplot.plot(time_data, T_gang_data, color='blue')
     pyplot.plot(time_data, T_zolder_data, color='black')
     pyplot.plot(time_data, T_toilet_data, color='red')
+    pyplot.plot(time_data, T_Delft_data, color='orange')
     figure.gca().relim()
     figure.gca().autoscale_view()
-    return [line1, line2, line3]
+    return [line1, line2, line3, line4]
 
 
 # below the main program loop starts
 
 
 if __name__ == '__main__':
-    data = {'DateTime': [], 'T_gang': [], 'T_toilet': [], 'T_zolder': []}
+    data = {'DateTime': [], 'T_gang': [], 'T_toilet': [], 'T_zolder': [], 'T_Delft': []}
     df = pd.DataFrame(data)
     # exportfilename = Path('C:/Users/carlo/OneDrive/Documenten/16. Python/HomeAutomation/hue_data.csv')
     hue_data_file = Path('hue_data.csv')
     if not hue_data_file.is_file(): #if the file does not exist; create the file and initialize the data
         df.to_csv('hue_data.csv')
-        time_data, T_gang_data, T_zolder_data, T_toilet_data = [], [], [], []
+        time_data, T_gang_data, T_zolder_data, T_toilet_data, T_Delft_data = [], [], [], [], []
     else: #read historic data from file
         old_df = pd.read_csv('hue_data.csv')
         time_data = pd.to_datetime(old_df['DateTime'], format='%Y-%m-%d %H:%M:%S').to_list()
         T_gang_data = old_df['T_gang'].to_list()
         T_zolder_data = old_df['T_zolder'].to_list()
         T_toilet_data = old_df['T_toilet'].to_list()
+        T_Delft_data = old_df['T_Delft'].to_list()
 
     #TODO prevent loss of connection with bridge
     initbridge()
@@ -121,9 +138,10 @@ if __name__ == '__main__':
     line1, = pyplot.plot_date(time_data, T_gang_data, '-', color='blue')
     line2, = pyplot.plot_date(time_data, T_zolder_data, '-', color='black')
     line3, = pyplot.plot_date(time_data, T_toilet_data, '-', color='red')
+    line4, = pyplot.plot_date(time_data, T_Delft_data, '-', color='orange')
     ax.set_xlabel('Date-Time')
     ax.set_ylabel('Temp (deg C)')
-    pyplot.legend(['gang', 'zolder', 'toilet'])
+    pyplot.legend(['first floor', 'second floor', 'ground floor', 'outside(Delft)'])
 
     #start the animation  with an interval in ms
     animation = FuncAnimation(figure, update, interval=60000)
