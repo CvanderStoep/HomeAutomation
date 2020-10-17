@@ -4,19 +4,27 @@ from matplotlib.animation import FuncAnimation
 from random import randrange
 import time
 
-x_data, y_data = [], []
+x_data, y_data, z_data = [], [], []
 
 figure = pyplot.figure()
-line, = pyplot.plot_date(x_data, y_data, '-')
+line1, = pyplot.plot_date(x_data, y_data, 'ro')
+line2, = pyplot.plot_date(x_data, z_data, 'b-')
+
 
 def update(frame):
     x_data.append(datetime.now())
     y_data.append(randrange(0, 100))
-    line.set_data(x_data, y_data)
+    z_data.append(randrange(0, 100))
+    line1.set_data(x_data, y_data)
+    line2.set_data(x_data, z_data)
+    pyplot.style.use("ggplot")
+    pyplot.plot(x_data, y_data, color = 'red')
+    pyplot.plot(x_data, z_data, color = 'black')
     figure.gca().relim()
     figure.gca().autoscale_view()
-    return line,
+    return [line1, line2]
 
-animation = FuncAnimation(figure, update, interval=2000)
+
+animation = FuncAnimation(figure, update, interval=1000)
 
 pyplot.show()
