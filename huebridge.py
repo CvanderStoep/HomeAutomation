@@ -78,16 +78,16 @@ def update(frame):
     newdf.to_csv('hue_data.csv', mode='a', header=False)
     print('T-zolder last update: ', sensors[8].state['lastupdated'])
 
-    t_data.append(datetime.now())
-    x_data.append(temp_sensor_gang)
-    y_data.append(temp_sensor_zolder)
-    z_data.append(temp_sensor_toilet)
-    line1.set_data(t_data, x_data)
-    line2.set_data(t_data, y_data)
-    line3.set_data(t_data, z_data)
-    pyplot.plot(t_data, x_data, color='blue')
-    pyplot.plot(t_data, y_data, color='black')
-    pyplot.plot(t_data, z_data, color='red')
+    time_data.append(datetime.now())
+    T_gang_data.append(temp_sensor_gang)
+    T_zolder_data.append(temp_sensor_zolder)
+    T_toilet_data.append(temp_sensor_toilet)
+    line1.set_data(time_data, T_gang_data)
+    line2.set_data(time_data, T_zolder_data)
+    line3.set_data(time_data, T_toilet_data)
+    pyplot.plot(time_data, T_gang_data, color='blue')
+    pyplot.plot(time_data, T_zolder_data, color='black')
+    pyplot.plot(time_data, T_toilet_data, color='red')
     figure.gca().relim()
     figure.gca().autoscale_view()
     return [line1, line2, line3]
@@ -99,27 +99,28 @@ def update(frame):
 if __name__ == '__main__':
     data = {'DateTime': [], 'T_gang': [], 'T_toilet': [], 'T_zolder': []}
     df = pd.DataFrame(data)
-    exportfilename = Path('C:/Users/carlo/OneDrive/Documenten/16. Python/HomeAutomation/hue_data.csv')
-    if not exportfilename.is_file():
+    # exportfilename = Path('C:/Users/carlo/OneDrive/Documenten/16. Python/HomeAutomation/hue_data.csv')
+    hue_data_file = Path('hue_data.csv')
+    if not hue_data_file.is_file(): #if the file does not exist; create the file and initialize the data
         df.to_csv('hue_data.csv')
+        time_data, T_gang_data, T_zolder_data, T_toilet_data = [], [], [], []
+    else: #read historic data from file
+        old_df = pd.read_csv('hue_data.csv')
+        time_data = pd.to_datetime(old_df['DateTime'], format='%Y-%m-%d %H:%M:%S').to_list()
+        T_gang_data = old_df['T_gang'].to_list()
+        T_zolder_data = old_df['T_zolder'].to_list()
+        T_toilet_data = old_df['T_toilet'].to_list()
+
+    #TODO prevent loss of connection with bridge
     initbridge()
     # getdictionary()
     # getsensors("temperature")
     # getlights()
 
-    old_df = pd.read_csv('hue_data.csv')
-
-#TODO view the old data first and add the new live data; make the if-then-else loop correct for existing/non-existing data
-    #initialize the data and the layout of the plot
-    # t_data, x_data, y_data, z_data = [], [], [], []
-    t_data, x_data, y_data, z_data = pd.to_datetime(old_df['DateTime'],format='%Y-%m-%d %H:%M:%S').to_list(), \
-                                     old_df['T_gang'].to_list(), \
-                                     old_df['T_toilet'].to_list(), \
-                                     old_df['T_zolder'].to_list()
     figure, ax = pyplot.subplots()
-    line1, = pyplot.plot_date(t_data, x_data, '-', color='blue')
-    line2, = pyplot.plot_date(t_data, y_data, '-', color='black')
-    line3, = pyplot.plot_date(t_data, z_data, '-', color='red')
+    line1, = pyplot.plot_date(time_data, T_gang_data, '-', color='blue')
+    line2, = pyplot.plot_date(time_data, T_zolder_data, '-', color='black')
+    line3, = pyplot.plot_date(time_data, T_toilet_data, '-', color='red')
     ax.set_xlabel('Date-Time')
     ax.set_ylabel('Temp (deg C)')
     pyplot.legend(['gang', 'zolder', 'toilet'])

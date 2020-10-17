@@ -7,8 +7,8 @@ import time
 x_data, y_data, z_data = [], [], []
 
 figure = pyplot.figure()
-line1, = pyplot.plot_date(x_data, y_data, 'ro')
-line2, = pyplot.plot_date(x_data, z_data, 'b-')
+line1, = pyplot.plot(x_data, y_data, 'r-o')
+line2, = pyplot.plot(x_data, z_data, 'b*--')
 
 
 def update(frame):
@@ -19,7 +19,7 @@ def update(frame):
     line2.set_data(x_data, z_data)
     pyplot.style.use("ggplot")
     pyplot.plot(x_data, y_data, color = 'red')
-    pyplot.plot(x_data, z_data, color = 'black')
+    pyplot.plot(x_data, z_data, color = 'yellow')
     figure.gca().relim()
     figure.gca().autoscale_view()
     return [line1, line2]
