@@ -6,14 +6,13 @@
 import requests, json
 
 # Enter your API key here
-api_key = "7d5fee11ffa54f01c926fea9ef45a27a"
-
+# api_key = "get api from openweathermap"
+from complete_url_Delft import api_key #imported from a seperate file, not sychronized to github
 # base_url variable to store url
 base_url = "http://api.openweathermap.org/data/2.5/weather?"
 
 # Give city name
-# city_name = input("Enter city name : ")
-city_name = 'Delft'
+city_name = input("Enter city name : ")
 
 # complete_url variable to store
 # complete url address
@@ -23,7 +22,6 @@ complete_url = base_url + "appid=" + api_key + "&q=" + city_name
 # return response object
 response = requests.get(complete_url)
 
-'http://api.openweathermap.org/data/2.5/weather?appid=7d5fee11ffa54f01c926fea9ef45a27a&q=Delft'
 # json method of response object
 # convert json format data into
 # python format data
