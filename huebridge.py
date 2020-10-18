@@ -12,11 +12,10 @@ from matplotlib.animation import FuncAnimation
 import requests, json
 
 
-# TODO protect api
-
 def initbridge():
     global bridge
-    bridge = Bridge('192.168.68.127')  # connected to Deco mesh
+    from private_info import ip_adress_hue_bridge
+    bridge = Bridge(ip_adress_hue_bridge)  # connected to Deco mesh
     # bridge.connect() #this command is needed only once; press hue bridge button en run bridge.connect() command.
     return
 
@@ -66,14 +65,15 @@ def getsensors(sensortype):
 
 
 def getDelftweather():
-    from complete_url_Delft import complete_url
+    from private_info import complete_url #combines api key and city for the temperature
     response = requests.get(complete_url)
     x = response.json()
     y = x["main"]
-    current_temperature = y["temp"] - 273.15  # convert K to deg C
+    current_temperature = round(y["temp"] - 273.15,2)  # convert K to deg C
     return current_temperature
 
 
+#TODO add proper index to dataframe
 def update(frame):
     # activate the sensors and get the data
     sensors = bridge.get_sensor_objects('id')
@@ -109,6 +109,12 @@ def update(frame):
     pyplot.plot(time_data, T_Delft_data, color='orange')
     figure.gca().relim()
     figure.gca().autoscale_view()
+
+    pyplot.legend(['first floor {T: .1f} deg C'.format(T = temp_sensor_gang),
+                   'second floor {T: .1f} deg C'.format(T=temp_sensor_zolder),
+                   'ground floor {T: .1f} deg C'.format(T=temp_sensor_toilet),
+                   'outside(Delft) {T: .1f} deg C'.format(T=temp_Delft)])
+
     return [line1, line2, line3, line4]
 
 
@@ -118,7 +124,6 @@ def update(frame):
 if __name__ == '__main__':
     data = {'DateTime': [], 'T_gang': [], 'T_toilet': [], 'T_zolder': [], 'T_Delft': []}
     df = pd.DataFrame(data)
-    # exportfilename = Path('C:/Users/carlo/OneDrive/Documenten/16. Python/HomeAutomation/hue_data.csv')
     hue_data_file = Path('hue_data.csv')
     if not hue_data_file.is_file():  # if the file does not exist; create the file and initialize the data
         df.to_csv('hue_data.csv')
@@ -144,9 +149,8 @@ if __name__ == '__main__':
     line4, = pyplot.plot_date(time_data, T_Delft_data, '-', color='orange')
     ax.set_xlabel('Date-Time')
     ax.set_ylabel('Temp (deg C)')
-    pyplot.legend(['first floor', 'second floor', 'ground floor', 'outside(Delft)'])
 
     # start the animation  with an interval in ms
-    animation = FuncAnimation(figure, update, interval=60000)
+    animation = FuncAnimation(figure, update, interval=1000)
 
     pyplot.show()

@@ -7,7 +7,7 @@ import requests, json
 
 # Enter your API key here
 # api_key = "get api from openweathermap"
-from complete_url_Delft import api_key #imported from a seperate file, not sychronized to github
+from private_info import api_key #imported from a seperate file, not sychronized to github
 # base_url variable to store url
 base_url = "http://api.openweathermap.org/data/2.5/weather?"
 
@@ -39,7 +39,7 @@ if x["cod"] != "404":
 
 	# store the value corresponding
 	# to the "temp" key of y
-	current_temperature = y["temp"] - 273.15 #convert K to deg C
+	current_temperature = round(y["temp"] - 273.15,2) #convert K to deg C
 
 	# store the value corresponding
 	# to the "pressure" key of y
