@@ -16,7 +16,7 @@ def initbridge():
     global bridge
     from private_info import ip_adress_hue_bridge
     bridge = Bridge(ip_adress_hue_bridge)  # connected to Deco mesh
-    # bridge.connect() #this command is needed only once; press hue bridge button en run bridge.connect() command.
+    bridge.connect() #this command is needed only once; press hue bridge button en run bridge.connect() command.
     return
 
 
@@ -74,6 +74,11 @@ def getDelftweather():
 
 
 #TODO add proper index to dataframe
+#TODO convert dictionay to dataframe
+#TODO rename T-gang etc naar T_first floor etc
+#TODO organize files (example; move bridge operations to separate file;
+# move example to use bridge module to another demo file)
+
 def update(frame):
     # activate the sensors and get the data
     sensors = bridge.get_sensor_objects('id')
@@ -90,7 +95,8 @@ def update(frame):
                 'T_Delft': [temp_Delft]}
     newdf = pd.DataFrame(new_data)  # only the latest data
     newdf.to_csv('hue_data.csv', mode='a', header=False)
-    print('T-zolder last update: ', sensors[8].state['lastupdated'])
+    print(new_data)
+    # print('T-zolder last update: ', sensors[8].state['lastupdated'])
 
     time_data.append(datetime.now())
     T_gang_data.append(temp_sensor_gang)
@@ -114,6 +120,10 @@ def update(frame):
                    'second floor {T: .1f} deg C'.format(T=temp_sensor_zolder),
                    'ground floor {T: .1f} deg C'.format(T=temp_sensor_toilet),
                    'outside(Delft) {T: .1f} deg C'.format(T=temp_Delft)])
+
+    ax.set_xlabel('Date-Time')
+    ax.set_ylabel('Temp (deg C)')
+
 
     return [line1, line2, line3, line4]
 
@@ -147,8 +157,6 @@ if __name__ == '__main__':
     line2, = pyplot.plot_date(time_data, T_zolder_data, '-', color='black')
     line3, = pyplot.plot_date(time_data, T_toilet_data, '-', color='red')
     line4, = pyplot.plot_date(time_data, T_Delft_data, '-', color='orange')
-    ax.set_xlabel('Date-Time')
-    ax.set_ylabel('Temp (deg C)')
 
     # start the animation  with an interval in ms
     animation = FuncAnimation(figure, update, interval=1000)
