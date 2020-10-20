@@ -106,10 +106,10 @@ def update(frame):
     T_toilet_data.append(temp_sensor_toilet)
     T_Delft_data.append(temp_Delft)
 
-    line1.set_data(time_data, T_gang_data)
-    line2.set_data(time_data, T_zolder_data)
-    line3.set_data(time_data, T_toilet_data)
-    line4.set_data(time_data, T_Delft_data)
+    line_gang.set_data(time_data, T_gang_data)
+    line_zolder.set_data(time_data, T_zolder_data)
+    line_toilet.set_data(time_data, T_toilet_data)
+    line_delft.set_data(time_data, T_Delft_data)
 
     pyplot.plot(time_data, T_gang_data, color='blue')
     pyplot.plot(time_data, T_zolder_data, color='black')
@@ -127,13 +127,13 @@ def update(frame):
     ax.set_ylabel('Temp (deg C)')
 
 
-    return [line1, line2, line3, line4]
+    return [line_gang, line_zolder, line_toilet, line_delft]
 
 
 # below the main program loop starts
 
 
-if __name__ == '__main__':
+def read_data():
     data = {'DateTime': [], 'T_gang': [], 'T_toilet': [], 'T_zolder': [], 'T_Delft': []}
     df = pd.DataFrame(data)
     hue_data_file = Path(DATA_FILE)
@@ -148,17 +148,28 @@ if __name__ == '__main__':
         T_toilet_data = old_df['T_toilet'].to_list()
         T_Delft_data = old_df['T_Delft'].to_list()
 
+    return time_data, T_gang_data, T_zolder_data, T_toilet_data, T_Delft_data
+
+
+def initialise_figure():
+    figure, ax = pyplot.subplots()
+    line_gang, = pyplot.plot_date(time_data, T_gang_data, '-', color='blue')
+    line_zolder, = pyplot.plot_date(time_data, T_zolder_data, '-', color='black')
+    line_toilet, = pyplot.plot_date(time_data, T_toilet_data, '-', color='red')
+    line_delft, = pyplot.plot_date(time_data, T_Delft_data, '-', color='orange')
+    return figure, ax, line_gang, line_zolder, line_toilet, line_delft
+
+
+if __name__ == '__main__':
+    (time_data, T_gang_data, T_zolder_data, T_toilet_data, T_Delft_data) = read_data()
+
     # TODO prevent loss of connection with bridge
     initbridge()
     # getdictionary()
     # getsensors("temperature")
     # getlights()
 
-    figure, ax = pyplot.subplots()
-    line1, = pyplot.plot_date(time_data, T_gang_data, '-', color='blue')
-    line2, = pyplot.plot_date(time_data, T_zolder_data, '-', color='black')
-    line3, = pyplot.plot_date(time_data, T_toilet_data, '-', color='red')
-    line4, = pyplot.plot_date(time_data, T_Delft_data, '-', color='orange')
+    (figure, ax, line_gang, line_zolder, line_toilet, line_delft) = initialise_figure()
 
     # start the animation  with an interval in ms
     animation = FuncAnimation(figure, update, interval=1000)
