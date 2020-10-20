@@ -11,6 +11,8 @@ from matplotlib import pyplot
 from matplotlib.animation import FuncAnimation
 import requests, json
 
+DATA_FILE = 'hue_data.csv'
+
 
 def initbridge():
     global bridge
@@ -94,7 +96,7 @@ def update(frame):
                 'T_zolder': [temp_sensor_zolder],
                 'T_Delft': [temp_Delft]}
     newdf = pd.DataFrame(new_data)  # only the latest data
-    newdf.to_csv('hue_data.csv', mode='a', header=False)
+    newdf.to_csv(DATA_FILE, mode='a', header=False)
     print(new_data)
     # print('T-zolder last update: ', sensors[8].state['lastupdated'])
 
@@ -134,12 +136,12 @@ def update(frame):
 if __name__ == '__main__':
     data = {'DateTime': [], 'T_gang': [], 'T_toilet': [], 'T_zolder': [], 'T_Delft': []}
     df = pd.DataFrame(data)
-    hue_data_file = Path('hue_data.csv')
+    hue_data_file = Path(DATA_FILE)
     if not hue_data_file.is_file():  # if the file does not exist; create the file and initialize the data
-        df.to_csv('hue_data.csv')
+        df.to_csv(DATA_FILE)
         time_data, T_gang_data, T_zolder_data, T_toilet_data, T_Delft_data = [], [], [], [], []
     else:  # read historic data from file
-        old_df = pd.read_csv('hue_data.csv')
+        old_df = pd.read_csv(DATA_FILE)
         time_data = pd.to_datetime(old_df['DateTime'], format='%Y-%m-%d %H:%M:%S').to_list()
         T_gang_data = old_df['T_gang'].to_list()
         T_zolder_data = old_df['T_zolder'].to_list()
