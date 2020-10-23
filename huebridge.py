@@ -18,7 +18,7 @@ def initbridge():
     global bridge
     from private_info import ip_adress_hue_bridge
     bridge = Bridge(ip_adress_hue_bridge)  # connected to Deco mesh
-    bridge.connect() #this command is needed only once; press hue bridge button en run bridge.connect() command.
+    bridge.connect()  # this command is needed only once; press hue bridge button en run bridge.connect() command.
     return
 
 
@@ -67,11 +67,11 @@ def getsensors(sensortype):
 
 
 def getoutsideweather():
-    from private_info import complete_url #combines api key and city for the temperature
+    from private_info import complete_url  # combines api key and city for the temperature
     response = requests.get(complete_url)
     x = response.json()
     y = x["main"]
-    current_temperature = round(y["temp"] - 273.15,2)  # convert K to deg C
+    current_temperature = round(y["temp"] - 273.15, 2)  # convert K to deg C
     return current_temperature
 
 
@@ -112,19 +112,15 @@ def update(frame):
     figure.gca().relim()
     figure.gca().autoscale_view()
 
-    pyplot.legend(['first floor {T: .1f} deg C'.format(T = temp_sensor_first_floor),
+    pyplot.legend(['first floor {T: .1f} deg C'.format(T=temp_sensor_first_floor),
                    'second floor {T: .1f} deg C'.format(T=temp_sensor_second_floor),
                    'ground floor {T: .1f} deg C'.format(T=temp_sensor_ground_floor),
-                   'outside {T: .1f} deg C'.format(T=temp_outside)])
+                   'outside {T: .1f} deg C'.format(T=temp_outside)], loc = 'lower right')
 
     ax.set_xlabel('Date-Time')
     ax.set_ylabel('Temp (deg C)')
 
-
     return [line_first_floor, line_second_floor, line_ground_floor, line_outside]
-
-
-# below the main program loop starts
 
 
 def read_data():
@@ -155,17 +151,17 @@ def initialise_figure():
 
 
 if __name__ == '__main__':
-    #read old data file
+    # read old data file
     (time_data, T_first_floor_data, T_second_floor_data, T_ground_floor_data, T_outside_data) = read_data()
 
     # TODO prevent loss of connection with bridge
-    #setup connection with the hue bridge
+    # setup connection with the hue bridge
     initbridge()
     # getdictionary()
     getsensors("temperature")
     # getlights()
 
-    #inititalize figure for animation
+    # inititalize figure for animation
     (figure, ax, line_first_floor, line_second_floor, line_ground_floor, line_outside) = initialise_figure()
 
     # start the animation  with an interval in ms

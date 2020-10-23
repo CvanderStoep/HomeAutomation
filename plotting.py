@@ -1,3 +1,7 @@
+"""""
+example file how FuncAnimation works
+"""
+
 from datetime import datetime
 from matplotlib import pyplot
 from matplotlib.animation import FuncAnimation
