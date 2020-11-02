@@ -9,7 +9,8 @@ from pathlib import Path
 from datetime import datetime
 from matplotlib import pyplot
 from matplotlib.animation import FuncAnimation
-import requests, json
+import requests  # , json
+from time import sleep
 
 DATA_FILE = 'hue_data.csv'
 
@@ -29,6 +30,11 @@ def getdictionary():
     for x, y in huedictionary.items():
         print(x, y)
     return
+
+
+def getrules():
+    name = bridge.username
+    print('name: ', name)
 
 
 def getlights():
@@ -77,7 +83,9 @@ def getoutsideweather():
 
 def update(frame):
     # activate the sensors and get the data
+    # try:
     sensors = bridge.get_sensor_objects('id')
+
     temp_sensor_first_floor = sensors[75].state['temperature'] / 100  # temp in degC
     temp_sensor_ground_floor = sensors[17].state['temperature'] / 100
     temp_sensor_second_floor = sensors[8].state['temperature'] / 100
@@ -105,7 +113,7 @@ def update(frame):
     line_ground_floor.set_data(time_data, T_ground_floor_data)
     line_outside.set_data(time_data, T_outside_data)
 
-    pyplot.plot(time_data, T_first_floor_data, color='blue')
+    pyplot.plot(time_data, T_first_floor_data,  color='blue')
     pyplot.plot(time_data, T_second_floor_data, color='black')
     pyplot.plot(time_data, T_ground_floor_data, color='red')
     pyplot.plot(time_data, T_outside_data, color='orange')
@@ -115,7 +123,7 @@ def update(frame):
     pyplot.legend(['first floor {T: .1f} deg C'.format(T=temp_sensor_first_floor),
                    'second floor {T: .1f} deg C'.format(T=temp_sensor_second_floor),
                    'ground floor {T: .1f} deg C'.format(T=temp_sensor_ground_floor),
-                   'outside {T: .1f} deg C'.format(T=temp_outside)], loc = 'lower right')
+                   'outside {T: .1f} deg C'.format(T=temp_outside)], loc='lower right', fontsize=8)
 
     ax.set_xlabel('Date-Time')
     ax.set_ylabel('Temp (deg C)')
@@ -154,17 +162,22 @@ if __name__ == '__main__':
     # read old data file
     (time_data, T_first_floor_data, T_second_floor_data, T_ground_floor_data, T_outside_data) = read_data()
 
-    # TODO prevent loss of connection with bridge
     # setup connection with the hue bridge
     initbridge()
-    # getdictionary()
+    getdictionary()
+    getrules()
     getsensors("temperature")
     # getlights()
+
 
     # inititalize figure for animation
     (figure, ax, line_first_floor, line_second_floor, line_ground_floor, line_outside) = initialise_figure()
 
-    # start the animation  with an interval in ms
-    animation = FuncAnimation(figure, update, interval=60000)
+    ReadDataOnly = False #if False, make plot; if True, read data only
+    while ReadDataOnly:
+        update(0)
+        sleep(60) #sleep time in sec.
 
+    # start the animation  with an interval in ms
+    animation = FuncAnimation(figure, update, interval=10000)
     pyplot.show()

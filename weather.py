@@ -4,12 +4,19 @@ weather details of any city
 using openweathermap api
 """
 
+# TODO use pyowm library
+
 # import required modules
-import requests, json
+import requests  # json
+from datetime import datetime, timedelta
+from dateutil import tz
+
+local = tz.gettz()
+print(datetime.now(tz=local))
 
 # Enter your API key here
 # api_key = "get api from openweathermap"
-from private_info import api_key #imported from a seperate file, not sychronized to github
+from private_info import api_key  # imported from a seperate file, not sychronized to github
 
 # base_url variable to store url
 base_url = "http://api.openweathermap.org/data/2.5/weather?"
@@ -29,6 +36,16 @@ response = requests.get(complete_url)
 # convert json format data into
 # python format data
 x = response.json()
+sunset_time = x["sys"]["sunset"]
+print("sunset, utc time stamp: ", sunset_time)  # timestamp
+
+# TODO automatic correction for Local Time Zone
+local_sunset_time = datetime.utcfromtimestamp(sunset_time) + timedelta(hours=1)  # correct for local timezone
+print("current local time: ", datetime.now())  # correct for local timezone
+print("current local sunset: ", local_sunset_time)
+
+# print(datetime.utcfromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S'))
+print('automatisch naar TZ: ', datetime.fromtimestamp(sunset_time, tz=local))
 
 # Now x contains list of nested dictionaries
 # Check the value of "cod" key is equal to
@@ -36,40 +53,40 @@ x = response.json()
 # city is not found
 if x["cod"] != "404":
 
-	# store the value of "main"
-	# key in variable y
-	y = x["main"]
+    # store the value of "main"
+    # key in variable y
+    y = x["main"]
 
-	# store the value corresponding
-	# to the "temp" key of y
-	current_temperature = round(y["temp"] - 273.15,2) #convert K to deg C
+    # store the value corresponding
+    # to the "temp" key of y
+    current_temperature = round(y["temp"] - 273.15, 2)  # convert K to deg C
 
-	# store the value corresponding
-	# to the "pressure" key of y
-	current_pressure = y["pressure"]
+    # store the value corresponding
+    # to the "pressure" key of y
+    current_pressure = y["pressure"]
 
-	# store the value corresponding
-	# to the "humidity" key of y
-	current_humidiy = y["humidity"]
+    # store the value corresponding
+    # to the "humidity" key of y
+    current_humidiy = y["humidity"]
 
-	# store the value of "weather"
-	# key in variable z
-	z = x["weather"]
+    # store the value of "weather"
+    # key in variable z
+    z = x["weather"]
 
-	# store the value corresponding
-	# to the "description" key at
-	# the 0th index of z
-	weather_description = z[0]["description"]
+    # store the value corresponding
+    # to the "description" key at
+    # the 0th index of z
+    weather_description = z[0]["description"]
 
-	# print following values
-	print(" Temperature (in deg Celsius) = " +
-					str(current_temperature) +
-		"\n atmospheric pressure (in hPa unit) = " +
-					str(current_pressure) +
-		"\n humidity (in percentage) = " +
-					str(current_humidiy) +
-		"\n description = " +
-					str(weather_description))
+    # print following values
+    print(" Temperature (in deg Celsius) = " +
+          str(current_temperature) +
+          "\n atmospheric pressure (in hPa unit) = " +
+          str(current_pressure) +
+          "\n humidity (in percentage) = " +
+          str(current_humidiy) +
+          "\n description = " +
+          str(weather_description))
 
 else:
-	print(" City Not Found ")
+    print(" City Not Found ")
