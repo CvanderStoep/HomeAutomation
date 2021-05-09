@@ -56,7 +56,7 @@ def getsensors(sensortype):
     print('Output for selected sensors:')
 
     for sensor in sensors:
-        if (sensortype in sensor.name):
+        if sensortype in sensor.name:
             print(sensor.sensor_id, sensor.name, sensor.state)
 
     # get a dictionary with sensor id as key
@@ -173,10 +173,10 @@ if __name__ == '__main__':
     # inititalize figure for animation
     (figure, ax, line_first_floor, line_second_floor, line_ground_floor, line_outside) = initialise_figure()
 
-    ReadDataOnly = False #if False, make plot; if True, read data only
+    ReadDataOnly = True #if False, make plot; if True, read data only
     while ReadDataOnly:
         update(0)
-        sleep(60) #sleep time in sec.
+        sleep(60) # sleep time in sec.
 
     # start the animation  with an interval in ms
     animation = FuncAnimation(figure, update, interval=10000)
