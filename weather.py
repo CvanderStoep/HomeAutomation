@@ -5,7 +5,7 @@ using openweathermap api
 """
 
 # TODO use pyowm library
-# wellicht niet meer doen?
+# wellicht niet meer doen??
 
 # import required modules
 import requests  # json
