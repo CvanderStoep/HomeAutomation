@@ -2,20 +2,35 @@ import requests  # , json
 import time
 from influxdb import InfluxDBClient
 from datetime import datetime, timedelta
-
 from phue import Bridge
+from private_info import ip_address_raspberry
 
-computer_adress = 'localhost'  # where is InfluxDB installed
+# computer_adress = ip_address_raspberry  # InfluxDB installed on the Raspberry PI
+computer_adress = 'localhost'  # InfluxDB installed on this PC
 computer_port = 8086  # port number of the DB
 client = InfluxDBClient(host=computer_adress, port=computer_port)
 database_name = 'localdata'
+database_test = 'testDB'
 
 
 def initbridge():
     global bridge
-    from private_info import ip_adress_hue_bridge
-    bridge = Bridge(ip_adress_hue_bridge)  # connected to Deco mesh
+    from private_info import ip_address_hue_bridge
+    bridge = Bridge(ip_address_hue_bridge)  # connected to Deco mesh
     bridge.connect()  # this command is needed only once; press hue bridge button en run bridge.connect() command.
+    return
+
+
+def getlights():
+    # get a flat list of light objects
+    # global lights
+    # lights = bridge.lights
+    # # print()
+    # # print()
+    # print('Output for all lights:')
+    # for light in lights:
+    #     print(light.light_id, light.name, light.on, light.brightness, light.type)
+    #
     return
 
 
@@ -62,6 +77,7 @@ if __name__ == '__main__':
     get data from the HUE
     """
     initbridge()
+    # getlights()
 
     cities = ["Delft", "London", "Maastricht", "Sydney", "Amsterdam"]
     while True:
@@ -100,6 +116,29 @@ if __name__ == '__main__':
                        'fields': {'temperature': temp_sensor_second_floor}
                        }]
 
+        lights = bridge.lights
+        for light in lights:
+            if light.on:
+                light_on = 1
+            else:
+                light_on = 0
+            data_point = data_point + \
+                         [{'measurement': 'hue_lights',
+                           'tags': {'light': light.name},
+                           'fields': {'on': light_on}
+                           }]
+
+            # print(light.light_id, light.name, light.on, light.brightness, light.type)
+
         client.write_points(data_point, database=database_name)
+
+        # test database using retention policies
+        data_point = [{'measurement': 'temperature',
+                       'tags': {'location': city},
+                       'fields': {'temperature': temp_outside}
+                       }]
+        client.write_points(data_point, database=database_test)
+        # test database using retention policies
+
         print(datetime.now(), data_point)
         time.sleep(60)  # sleep time in sec.

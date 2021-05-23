@@ -17,8 +17,8 @@ DATA_FILE = 'hue_data.csv'
 
 def initbridge():
     global bridge
-    from private_info import ip_adress_hue_bridge
-    bridge = Bridge(ip_adress_hue_bridge)  # connected to Deco mesh
+    from private_info import ip_address_hue_bridge
+    bridge = Bridge(ip_address_hue_bridge)  # connected to Deco mesh
     bridge.connect()  # this command is needed only once; press hue bridge button en run bridge.connect() command.
     return
 
@@ -49,6 +49,10 @@ def getlights():
     return
 
 
+def getschedule():
+    print(bridge.get_schedule())
+
+
 def getsensors(sensortype):
     # get a flat list of sensor objects of type sensortype
     sensors = bridge.sensors
@@ -56,8 +60,8 @@ def getsensors(sensortype):
     print('Output for selected sensors:')
 
     for sensor in sensors:
-        if sensortype in sensor.name:
-            print(sensor.sensor_id, sensor.name, sensor.state)
+        # if sensortype in sensor.name:
+        print(sensor.sensor_id, sensor.name, sensor.state)
 
     # get a dictionary with sensor id as key
     sensors = bridge.get_sensor_objects('id')
@@ -113,7 +117,7 @@ def update(frame):
     line_ground_floor.set_data(time_data, T_ground_floor_data)
     line_outside.set_data(time_data, T_outside_data)
 
-    pyplot.plot(time_data, T_first_floor_data,  color='blue')
+    pyplot.plot(time_data, T_first_floor_data, color='blue')
     pyplot.plot(time_data, T_second_floor_data, color='black')
     pyplot.plot(time_data, T_ground_floor_data, color='red')
     pyplot.plot(time_data, T_outside_data, color='orange')
@@ -167,16 +171,16 @@ if __name__ == '__main__':
     getdictionary()
     getrules()
     getsensors("temperature")
-    # getlights()
-
+    getlights()
+    getschedule()
 
     # inititalize figure for animation
     (figure, ax, line_first_floor, line_second_floor, line_ground_floor, line_outside) = initialise_figure()
 
-    ReadDataOnly = True #if False, make plot; if True, read data only
+    ReadDataOnly = True  # if False, make plot; if True, read data only
     while ReadDataOnly:
         update(0)
-        sleep(60) # sleep time in sec.
+        sleep(60)  # sleep time in sec.
 
     # start the animation  with an interval in ms
     animation = FuncAnimation(figure, update, interval=10000)

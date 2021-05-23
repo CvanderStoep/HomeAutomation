@@ -10,6 +10,8 @@ using openweathermap api
 import requests  # json
 from datetime import datetime, timedelta
 from dateutil import tz
+import yaml
+
 
 local = tz.gettz()
 print(datetime.now(tz=local))
@@ -36,16 +38,20 @@ response = requests.get(complete_url)
 # convert json format data into
 # python format data
 x = response.json()
+print(x)
 sunset_time = x["sys"]["sunset"]
 print("sunset, utc time stamp: ", sunset_time)  # timestamp
 
 # TODO automatic correction for Local Time Zone
-local_sunset_time = datetime.utcfromtimestamp(sunset_time) + timedelta(hours=1)  # correct for local timezone
+# local_sunset_time = datetime.utcfromtimestamp(sunset_time) + timedelta(hours=1)  # correct for local timezone
 print("current local time: ", datetime.now())  # correct for local timezone
-print("current local sunset: ", local_sunset_time)
+# print("current local sunset: ", local_sunset_time)
 
 # print(datetime.utcfromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S'))
-print('automatisch naar TZ: ', datetime.fromtimestamp(sunset_time, tz=local))
+print('sunset corrected for TZ: ', datetime.fromtimestamp(sunset_time, tz=local))
+
+print (x.keys())
+print(yaml.dump(x))
 
 # Now x contains list of nested dictionaries
 # Check the value of "cod" key is equal to
