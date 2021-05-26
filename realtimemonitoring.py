@@ -64,14 +64,19 @@ def getoutsideweather(city="Delft"):
     response = requests.get(complete_url)
     x = response.json()
     y = x["main"]
+    wind_speed = x["wind"]["speed"]
     current_temperature = round(y["temp"] - 273.15, 2)  # convert K to deg C
-    return current_temperature
+    return current_temperature, wind_speed
 
 
 if __name__ == '__main__':
 
     print(client.get_list_database())
-    # print(client.query(database=database_name, query='select * from temperature'))
+    results = (client.query(database=database_name, query='select * from temperature limit 5'))
+    for result in list(results.get_points()):
+        print(result)
+
+
 
     """" 
     get data from the HUE
@@ -83,7 +88,7 @@ if __name__ == '__main__':
     while True:
         data_point = []
         for city in cities:
-            temp_outside = getoutsideweather(city)  # get the current outside Temperature using OpenWeatherData
+            temp_outside, wind_speed = getoutsideweather(city)  # get the current outside Temperature using OpenWeatherData
             data_point = data_point + \
                          [{'measurement': 'temperature',
                            'tags': {'location': city},
@@ -136,7 +141,12 @@ if __name__ == '__main__':
         data_point = [{'measurement': 'temperature',
                        'tags': {'location': city},
                        'fields': {'temperature': temp_outside}
+                       }] + \
+                     [{'measurement': 'wind',
+                       'tags': {'location': city},
+                       'fields': {'speed': wind_speed}
                        }]
+
         client.write_points(data_point, database=database_test)
         # test database using retention policies
 
