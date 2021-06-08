@@ -6,11 +6,11 @@ from phue import Bridge
 from private_info import ip_address_raspberry
 
 # computer_adress = ip_address_raspberry  # InfluxDB installed on the Raspberry PI
-computer_adress = 'localhost'  # InfluxDB installed on this PC
+computer_address = 'localhost'  # InfluxDB installed on this PC
 computer_port = 8086  # port number of the DB
-client = InfluxDBClient(host=computer_adress, port=computer_port)
+client = InfluxDBClient(host=computer_address, port=computer_port)
 database_name = 'localdata'
-database_test = 'testDB'
+# database_test = 'testDB'
 
 
 def initbridge():
@@ -76,8 +76,6 @@ if __name__ == '__main__':
     for result in list(results.get_points()):
         print(result)
 
-
-
     """" 
     get data from the HUE
     """
@@ -93,6 +91,10 @@ if __name__ == '__main__':
                          [{'measurement': 'temperature',
                            'tags': {'location': city},
                            'fields': {'temperature': temp_outside}
+                           }] + \
+                         [{'measurement': 'wind',
+                           'tags': {'location': city},
+                           'fields': {'speed': wind_speed}
                            }]
 
         sensors = bridge.get_sensor_objects('id')
@@ -138,17 +140,17 @@ if __name__ == '__main__':
         client.write_points(data_point, database=database_name)
 
         # test database using retention policies
-        data_point = [{'measurement': 'temperature',
-                       'tags': {'location': city},
-                       'fields': {'temperature': temp_outside}
-                       }] + \
-                     [{'measurement': 'wind',
-                       'tags': {'location': city},
-                       'fields': {'speed': wind_speed}
-                       }]
-
-        client.write_points(data_point, database=database_test)
+        # data_point = [{'measurement': 'temperature',
+        #                'tags': {'location': city},
+        #                'fields': {'temperature': temp_outside}
+        #                }] + \
+        #              [{'measurement': 'wind',
+        #                'tags': {'location': city},
+        #                'fields': {'speed': wind_speed}
+        #                }]
+        #
+        # client.write_points(data_point, database=database_test)
         # test database using retention policies
 
         print(datetime.now(), data_point)
-        time.sleep(60)  # sleep time in sec.
+        time.sleep(10)  # sleep time in sec.
