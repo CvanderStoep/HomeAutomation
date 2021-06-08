@@ -153,4 +153,4 @@ if __name__ == '__main__':
         # test database using retention policies
 
         print(datetime.now(), data_point)
-        time.sleep(10)  # sleep time in sec.
+        time.sleep(60)  # sleep time in sec.
