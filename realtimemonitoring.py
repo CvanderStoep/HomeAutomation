@@ -82,7 +82,7 @@ if __name__ == '__main__':
     initbridge()
     # getlights()
 
-    cities = ["Delft", "London", "Maastricht", "Sydney", "Amsterdam"]
+    cities = ["Delft", "London", "Maastricht", "Sydney", "Amsterdam", "Schiermonnikoog"]
     while True:
         data_point = []
         for city in cities:
