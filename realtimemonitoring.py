@@ -9,8 +9,9 @@ from private_info import ip_address_raspberry
 computer_address = 'localhost'  # InfluxDB installed on this PC
 computer_port = 8086  # port number of the DB
 client = InfluxDBClient(host=computer_address, port=computer_port)
-database_name = 'localdata'
-# database_test = 'testDB'
+database_name = "localdata"
+retention_policy_default = None # the temperature readings are stored indefinitely
+retention_policy_one_week = "one-week" # the light readings are stored one week
 
 
 def initbridge():
@@ -21,17 +22,6 @@ def initbridge():
     return
 
 
-def getlights():
-    # get a flat list of light objects
-    # global lights
-    # lights = bridge.lights
-    # # print()
-    # # print()
-    # print('Output for all lights:')
-    # for light in lights:
-    #     print(light.light_id, light.name, light.on, light.brightness, light.type)
-    #
-    return
 
 
 def getsensors(sensortype):
@@ -80,7 +70,6 @@ if __name__ == '__main__':
     get data from the HUE
     """
     initbridge()
-    # getlights()
 
     cities = ["Delft", "London", "Maastricht", "Sydney", "Amsterdam", "Schiermonnikoog", "De Bilt"]
     while True:
@@ -123,6 +112,9 @@ if __name__ == '__main__':
                        'fields': {'temperature': temp_sensor_second_floor}
                        }]
 
+        client.write_points(data_point, database=database_name, retention_policy=retention_policy_default)
+
+        data_point = []
         lights = bridge.lights
         for light in lights:
             if light.on:
@@ -135,22 +127,9 @@ if __name__ == '__main__':
                            'fields': {'on': light_on}
                            }]
 
-            # print(light.light_id, light.name, light.on, light.brightness, light.type)
 
-        client.write_points(data_point, database=database_name)
+        client.write_points(data_point, database=database_name, retention_policy=retention_policy_one_week)
 
-        # test database using retention policies
-        # data_point = [{'measurement': 'temperature',
-        #                'tags': {'location': city},
-        #                'fields': {'temperature': temp_outside}
-        #                }] + \
-        #              [{'measurement': 'wind',
-        #                'tags': {'location': city},
-        #                'fields': {'speed': wind_speed}
-        #                }]
-        #
-        # client.write_points(data_point, database=database_test)
-        # test database using retention policies
 
         print(datetime.now(), data_point)
         time.sleep(60)  # sleep time in sec.
