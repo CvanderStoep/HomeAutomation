@@ -55,8 +55,12 @@ def getoutsideweather(city="Delft"):
     x = response.json()
     y = x["main"]
     wind_speed = x["wind"]["speed"]
+    wind_direction = x["wind"]["deg"]
     current_temperature = round(y["temp"] - 273.15, 2)  # convert K to deg C
-    return current_temperature, wind_speed
+    weather_type = x["weather"][0]["main"]
+    humidity = x["main"]["humidity"]
+    pressure = x["main"]["pressure"]
+    return current_temperature, wind_speed, weather_type, humidity, pressure, wind_direction
 
 
 if __name__ == '__main__':
@@ -75,11 +79,28 @@ if __name__ == '__main__':
     while True:
         data_point = []
         for city in cities:
-            temp_outside, wind_speed = getoutsideweather(city)  # get the current outside Temperature using OpenWeatherData
+            temp_outside, wind_speed, weather_type, humidity, pressure, wind_direction = getoutsideweather(city)  # get the current outside Temperature using OpenWeatherData
+            # print(f'{weather_type = }')
             data_point = data_point + \
                          [{'measurement': 'temperature',
                            'tags': {'location': city},
                            'fields': {'temperature': temp_outside}
+                           }] + \
+                         [{'measurement': 'pressure',
+                           'tags': {'location': city},
+                           'fields': {'pressure': pressure}
+                           }] + \
+                         [{'measurement': 'humidity',
+                           'tags': {'location': city},
+                           'fields': {'humidity': humidity}
+                           }] + \
+                         [{'measurement': 'weather_type',
+                           'tags': {'location': city},
+                           'fields': {'weather_type': weather_type}
+                           }] + \
+                         [{'measurement': 'wind',
+                           'tags': {'location': city},
+                           'fields': {'direction': wind_direction}
                            }] + \
                          [{'measurement': 'wind',
                            'tags': {'location': city},
@@ -113,6 +134,8 @@ if __name__ == '__main__':
                        }]
 
         client.write_points(data_point, database=database_name, retention_policy=retention_policy_default)
+        print(datetime.now(), data_point)
+
 
         data_point = []
         lights = bridge.lights
