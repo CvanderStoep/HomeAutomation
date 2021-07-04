@@ -5,13 +5,18 @@ from datetime import datetime, timedelta
 from phue import Bridge
 from private_info import ip_address_raspberry
 
+from InverterExport import InverterExport
+
+
 # computer_adress = ip_address_raspberry  # InfluxDB installed on the Raspberry PI
 computer_address = 'localhost'  # InfluxDB installed on this PC
 computer_port = 8086  # port number of the DB
 client = InfluxDBClient(host=computer_address, port=computer_port)
+inverter_exporter = InverterExport('config.cfg')
+
 database_name = "localdata"
-retention_policy_default = None # the temperature readings are stored indefinitely
-retention_policy_one_week = "one-week" # the light readings are stored one week
+retention_policy_default = None  # the temperature readings are stored indefinitely
+retention_policy_one_week = "one-week"  # the light readings are stored one week
 
 
 def initbridge():
@@ -20,8 +25,6 @@ def initbridge():
     bridge = Bridge(ip_address_hue_bridge)  # connected to Deco mesh
     bridge.connect()  # this command is needed only once; press hue bridge button en run bridge.connect() command.
     return
-
-
 
 
 def getsensors(sensortype):
@@ -65,6 +68,7 @@ def getoutsideweather(city="Delft"):
 
 if __name__ == '__main__':
 
+
     print(client.get_list_database())
     results = (client.query(database=database_name, query='select * from temperature limit 5'))
     for result in list(results.get_points()):
@@ -76,10 +80,20 @@ if __name__ == '__main__':
     initbridge()
 
     cities = ["Delft", "London", "Maastricht", "Sydney", "Amsterdam", "Schiermonnikoog", "De Bilt"]
+
+    # measurement, field-name, field-value
+    # datapoints = ['temperature', 'temperature', temp_outside] + \
+    #              ['pressure', 'pressure', pressure] + \
+    #              ['humidity', 'humidity', humidity] + \
+    #              ['weather_type', 'weather_type', weather_type] + \
+    #              ['wind', 'direction', wind_direction] + \
+    #              ['wind', 'speed', wind_speed]
+
     while True:
         data_point = []
         for city in cities:
-            temp_outside, wind_speed, weather_type, humidity, pressure, wind_direction = getoutsideweather(city)  # get the current outside Temperature using OpenWeatherData
+            temp_outside, wind_speed, weather_type, humidity, pressure, wind_direction = getoutsideweather(
+                city)  # get the current outside Temperature using OpenWeatherData
             # print(f'{weather_type = }')
             data_point = data_point + \
                          [{'measurement': 'temperature',
@@ -136,7 +150,6 @@ if __name__ == '__main__':
         client.write_points(data_point, database=database_name, retention_policy=retention_policy_default)
         print(datetime.now(), data_point)
 
-
         data_point = []
         lights = bridge.lights
         for light in lights:
@@ -150,9 +163,9 @@ if __name__ == '__main__':
                            'fields': {'on': light_on}
                            }]
 
-
         client.write_points(data_point, database=database_name, retention_policy=retention_policy_one_week)
 
-
         print(datetime.now(), data_point)
+        inverter_exporter.run()
+
         time.sleep(60)  # sleep time in sec.
