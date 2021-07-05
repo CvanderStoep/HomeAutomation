@@ -82,7 +82,7 @@ if __name__ == '__main__':
     """
     initbridge()
 
-    cities = ["Delft", "London", "Maastricht", "Sydney", "Amsterdam", "Schiermonnikoog", "De Bilt"]
+    cities = ["Delft", "London", "Maastricht", "Sydney", "Amsterdam", "Schiermonnikoog", "De Bilt", "Caen"]
 
     # measurement, field-name, field-value
     # datapoints = ['temperature', 'temperature', temp_outside] + \
