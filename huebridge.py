@@ -2,6 +2,10 @@
 documentation can be found at below link:
 https://github.com/studioimaginaire/phue
 
+This module is not used anymore; replaced by the realtimemonitoring.py app
+Huebridge.py writes the output to a csv file
+Realtimemonitoring writes the output to InfluxDB
+
 """
 from phue import Bridge
 import pandas as pd

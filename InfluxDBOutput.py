@@ -4,13 +4,18 @@ import PluginLoader
 import sys
 
 from influxdb import InfluxDBClient
+from private_info import database_name
+from private_info import computer_address
+from private_info import computer_port
+from private_info import city
+
 
 # TODO move below to config.cfg file?
-computer_address = 'localhost'  # InfluxDB installed on this PC
-computer_port = 8086  # port number of the DB
+# computer_address = 'localhost'  # InfluxDB installed on this PC
+# computer_port = 8086  # port number of the DB
 client = InfluxDBClient(host=computer_address, port=computer_port)
-city = "Home"
-database_name = "localdata"
+# city = "Home"
+# database_name = "localdata"
 
 
 class InfluxDBOutput(PluginLoader.Plugin):

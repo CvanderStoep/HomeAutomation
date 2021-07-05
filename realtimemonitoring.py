@@ -4,17 +4,20 @@ from influxdb import InfluxDBClient
 from datetime import datetime, timedelta
 from phue import Bridge
 from private_info import ip_address_raspberry
+from private_info import database_name
+from private_info import computer_address
+from private_info import computer_port
 
 from InverterExport import InverterExport
 
 
 # computer_adress = ip_address_raspberry  # InfluxDB installed on the Raspberry PI
-computer_address = 'localhost'  # InfluxDB installed on this PC
-computer_port = 8086  # port number of the DB
+# computer_address = 'localhost'  # InfluxDB installed on this PC
+# computer_port = 8086  # port number of the DB
 client = InfluxDBClient(host=computer_address, port=computer_port)
 inverter_exporter = InverterExport('config.cfg')
 
-database_name = "localdata"
+# database_name = "localdata"
 retention_policy_default = None  # the temperature readings are stored indefinitely
 retention_policy_one_week = "one-week"  # the light readings are stored one week
 
