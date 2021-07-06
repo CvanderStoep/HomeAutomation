@@ -9,13 +9,7 @@ from private_info import computer_address
 from private_info import computer_port
 from private_info import city
 
-
-# TODO move below to config.cfg file?
-# computer_address = 'localhost'  # InfluxDB installed on this PC
-# computer_port = 8086  # port number of the DB
 client = InfluxDBClient(host=computer_address, port=computer_port)
-# city = "Home"
-# database_name = "localdata"
 
 
 class InfluxDBOutput(PluginLoader.Plugin):
@@ -31,27 +25,22 @@ class InfluxDBOutput(PluginLoader.Plugin):
                        'tags': {'location': city},
                        'fields': {'power': msg.p_ac(1)}
                        }] + \
-                      [{'measurement': 'solarpanel',
-                        'tags': {'location': city},
-                        'fields': {'Temp': msg.temp}
-                        }] + \
-                      [{'measurement': 'solarpanel',
-                        'tags': {'location': city},
-                        'fields': {'power today': msg.e_today}
-                        }] + \
-                      [{'measurement': 'solarpanel',
-                        'tags': {'location': city},
-                        'fields': {'power total': ((((msg.e_today * 10) - (int(msg.e_today * 10))) / 10) + msg.e_total)}
-                        }]
+                     [{'measurement': 'solarpanel',
+                       'tags': {'location': city},
+                       'fields': {'Temp': msg.temp}
+                       }] + \
+                     [{'measurement': 'solarpanel',
+                       'tags': {'location': city},
+                       'fields': {'power today': msg.e_today}
+                       }] + \
+                     [{'measurement': 'solarpanel',
+                       'tags': {'location': city},
+                       'fields': {'power total': ((((msg.e_today * 10) - (int(msg.e_today * 10))) / 10) + msg.e_total)}
+                       }]
 
         print(datetime.now(), data_point)
         client.write_points(data_point, database=database_name)
-        # , retention_policy=retention_policy_default)
 
-        print('day, total=',msg.e_today, msg.e_total )
-        print('int-diff= ', (((msg.e_today * 10) - (int(msg.e_today * 10))) / 10))
-
-        print('hier moet je komen als je InfluxDB gebruikt als Output')
         sys.stdout.write('Inverter ID: {0}\n'.format(msg.id))
 
         sys.stdout.write('E Today : {0:>5}   Total: {1:<5}\n'.format(msg.e_today, (

@@ -30,27 +30,27 @@ def initbridge():
     return
 
 
-def getsensors(sensortype):
-    # get a flat list of sensor objects of type sensortype
-    sensors = bridge.sensors
-    print()
-    print('Output for selected sensors:')
-
-    for sensor in sensors:
-        if sensortype in sensor.name:
-            print(sensor.sensor_id, sensor.name, sensor.state)
-
-    # get a dictionary with sensor id as key
-    sensors = bridge.get_sensor_objects('id')
-    temp_sensor_second_floor = sensors[8].state['temperature'] / 100
-    temp_sensor_ground_floor = sensors[17].state['temperature'] / 100
-    temp_sensor_first_floor = sensors[75].state['temperature'] / 100  # temp in degC
-
-    print()
-    print('Temperature Sensor[8] - second_floor: ', temp_sensor_second_floor)
-    print('Temperature Sensor[17] - ground_floor: ', temp_sensor_ground_floor)
-    print('Temperature Sensor[75] - first_floor: ', temp_sensor_first_floor)
-    return
+# def getsensors(sensortype):
+#     # get a flat list of sensor objects of type sensortype
+#     sensors = bridge.sensors
+#     print()
+#     print('Output for selected sensors:')
+#
+#     for sensor in sensors:
+#         if sensortype in sensor.name:
+#             print(sensor.sensor_id, sensor.name, sensor.state)
+#
+#     # get a dictionary with sensor id as key
+#     sensors = bridge.get_sensor_objects('id')
+#     temp_sensor_second_floor = sensors[8].state['temperature'] / 100
+#     temp_sensor_ground_floor = sensors[17].state['temperature'] / 100
+#     temp_sensor_first_floor = sensors[75].state['temperature'] / 100  # temp in degC
+#
+#     print()
+#     print('Temperature Sensor[8] - second_floor: ', temp_sensor_second_floor)
+#     print('Temperature Sensor[17] - ground_floor: ', temp_sensor_ground_floor)
+#     print('Temperature Sensor[75] - first_floor: ', temp_sensor_first_floor)
+#     return
 
 
 def getoutsideweather(city="Delft"):
@@ -82,22 +82,14 @@ if __name__ == '__main__':
     """
     initbridge()
 
-    cities = ["Delft", "London", "Maastricht", "Sydney", "Amsterdam", "Schiermonnikoog", "De Bilt", "Caen"]
+    cities = ["Delft", "London", "Maastricht", "Sydney", "Amsterdam", "Schiermonnikoog", "De Bilt", "Caen", "Delfgauw"]
 
-    # measurement, field-name, field-value
-    # datapoints = ['temperature', 'temperature', temp_outside] + \
-    #              ['pressure', 'pressure', pressure] + \
-    #              ['humidity', 'humidity', humidity] + \
-    #              ['weather_type', 'weather_type', weather_type] + \
-    #              ['wind', 'direction', wind_direction] + \
-    #              ['wind', 'speed', wind_speed]
 
     while True:
         data_point = []
         for city in cities:
             temp_outside, wind_speed, weather_type, humidity, pressure, wind_direction = getoutsideweather(
                 city)  # get the current outside Temperature using OpenWeatherData
-            # print(f'{weather_type = }')
             data_point = data_point + \
                          [{'measurement': 'temperature',
                            'tags': {'location': city},
