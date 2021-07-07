@@ -2,7 +2,7 @@
 Home Automation Project
 
 
-##Get live data from the following sources:
+## Get live data from the following sources:
  -City weather data using openweathermap api
  -Hue light sensor data
  -Hue temperature sensor data
