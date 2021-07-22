@@ -1,0 +1,5 @@
+numpy
+pyYAML
+requests
+influxdb
+phue

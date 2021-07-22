@@ -9,3 +9,5 @@
 ### Output is send to InfluxDB
 ### Output is visualized using Grafana
 
+### Working on: 
+* Publishing all via Docker Containers for InfluxDB, Python & Grafana

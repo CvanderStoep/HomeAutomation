@@ -14,4 +14,31 @@ def getoutsideweather(city="Delft"):
     weather_type = x["weather"][0]["main"]
     humidity = x["main"]["humidity"]
     pressure = x["main"]["pressure"]
-    return current_temperature, wind_speed, weather_type, humidity, pressure, wind_direction
+
+    data_point = [{'measurement': 'temperature',
+                   'tags': {'location': city},
+                   'fields': {'temperature': current_temperature}
+                   }] + \
+                 [{'measurement': 'pressure',
+                   'tags': {'location': city},
+                   'fields': {'pressure': pressure}
+                   }] + \
+                 [{'measurement': 'humidity',
+                   'tags': {'location': city},
+                   'fields': {'humidity': humidity}
+                   }] + \
+                 [{'measurement': 'weather_type',
+                   'tags': {'location': city},
+                   'fields': {'weather_type': weather_type}
+                   }] + \
+                 [{'measurement': 'wind',
+                   'tags': {'location': city},
+                   'fields': {'direction': wind_direction}
+                   }] + \
+                 [{'measurement': 'wind',
+                   'tags': {'location': city},
+                   'fields': {'speed': wind_speed}
+                   }]
+    # return current_temperature, wind_speed, weather_type, humidity, pressure, wind_direction
+    return data_point
+

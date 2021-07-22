@@ -1,0 +1,65 @@
+version: '3'
+
+services:
+#Define influxDB service (version 1.8)
+  influxDB:
+    image: influxdb:1.8
+    container_name: influxDB
+    restart: always
+    ports:
+      - 8086:8086
+    volumes:
+      - influxdb:/var/lib/influxdb
+    networks:
+      - home_network
+
+#Define influxDB service (version 2.0)
+#  influxDB2:
+#    image: influxdb:2.0
+#    container_name: influxDB2
+#    restart: always
+#    ports:
+#      - 8086:8086
+#    volumes:
+#      - influxdb2:/var/lib/influxdb2
+#      - influxdb2.conf:/etc/influxdb2
+#    networks:
+#      - home_network
+
+#Define grafana service
+  grafana:
+    container_name: "grafana"
+    image: "grafana/grafana:latest"
+    restart: always
+    ports:
+    - 3000:3000
+    volumes:
+    - grafana:/var/lib/grafana
+    networks:
+      - home_network
+
+#Define realtimemonitoring
+  realtimemonitoring:
+    build: ./
+    networks:
+      - home_network
+    stdin_open: true
+    tty: true
+#    volumes:
+#      - realtime:/usr/src/app
+
+volumes:
+  influxdb:
+    external: true
+  influxdb2:
+    external: true
+  influxdb2.conf:
+    external: true
+  grafana:
+    external: true
+  realtime:
+#    external: true
+
+networks:
+  home_network:
+
