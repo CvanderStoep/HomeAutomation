@@ -9,10 +9,10 @@ def outside_weather(city="Delft"):
     x = response.json()
     y = x["main"]
     wind_speed = float(x["wind"]["speed"])
-    wind_direction = float(x["wind"]["deg"])
+    wind_direction = (x["wind"]["deg"])
     current_temperature = round(y["temp"] - 273.15, 2)  # convert K to deg C
     weather_type = x["weather"][0]["main"]
-    humidity = float(x["main"]["humidity"])
+    humidity = (x["main"]["humidity"])
     pressure = x["main"]["pressure"]
 
     data_point = [{'measurement': 'temperature',
