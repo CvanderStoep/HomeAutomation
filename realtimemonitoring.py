@@ -16,7 +16,7 @@ from datetime import datetime, timedelta
 from initbridge import initbridge
 from get_hue_temp import hue_temp
 from get_hue_lights import hue_lights
-from outsideweather import getoutsideweather
+from get_outside_weather import outside_weather
 from private_info import cities
 from private_info import database_name
 from private_info import computer_address
@@ -41,20 +41,20 @@ if __name__ == '__main__':
     bridge = initbridge()
 
     while True:
-        # get data from the various cities from open weather
+        # get outside weather data from the various cities using open weather site
         data_point = []
         for city in cities:
-            data_point = data_point + getoutsideweather(city)
+            data_point = data_point + outside_weather(city)
 
         client.write_points(data_point, database=database_name, retention_policy=retention_policy_default)
         print(datetime.now(), data_point)
 
-        # get temp data from the hue bridge
+        # get inside temperature data from the hue bridge
         data_point = hue_temp(bridge)
         client.write_points(data_point, database=database_name, retention_policy=retention_policy_default)
         print(datetime.now(), data_point)
 
-        # get status of the light from the hue
+        # get status of the lights from the hue
         data_point = hue_lights(bridge)
         client.write_points(data_point, database=database_name, retention_policy=retention_policy_one_week)
         print(datetime.now(), data_point)

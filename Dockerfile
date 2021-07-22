@@ -7,7 +7,6 @@ COPY requirements.txt .
 COPY config.cfg .
 COPY *.py .
 
-
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Below is executed at the start of the container from the image

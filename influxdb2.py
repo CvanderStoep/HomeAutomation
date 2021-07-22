@@ -12,10 +12,7 @@ client2 = InfluxDBClient(url=DB_url, token=token)
 
 write_api = client2.write_api(write_options=SYNCHRONOUS)
 
-for i in range(10):
-    p = Point("hue_temperature").tag("sensor","ground_floor").field("temperature",25.3 + i*i)
-    p2 = Point("hue_temperature").tag("sensor","ground_floor").field("temperature2",15.3 + i*i)
-    write_api.write(bucket=bucket, org=org, record=[p, p2])
-    print(i)
-    time.sleep(10)
+p = Point("hue_temperature").tag("sensor","ground_floor").field("temperature",25.3)
+p2 = Point("hue_temperature").tag("sensor","ground_floor").field("temperature2",15.3)
+write_api.write(bucket=bucket, org=org, record=[p, p2])
 

@@ -1,18 +1,18 @@
 import requests
 
 
-def getoutsideweather(city="Delft"):
+def outside_weather(city="Delft"):
     # from private_info import complete_url  # combines api key and city for the temperature
     from private_info import web_url
     complete_url = web_url + city
     response = requests.get(complete_url)
     x = response.json()
     y = x["main"]
-    wind_speed = x["wind"]["speed"]
-    wind_direction = x["wind"]["deg"]
+    wind_speed = float(x["wind"]["speed"])
+    wind_direction = float(x["wind"]["deg"])
     current_temperature = round(y["temp"] - 273.15, 2)  # convert K to deg C
     weather_type = x["weather"][0]["main"]
-    humidity = x["main"]["humidity"]
+    humidity = float(x["main"]["humidity"])
     pressure = x["main"]["pressure"]
 
     data_point = [{'measurement': 'temperature',
