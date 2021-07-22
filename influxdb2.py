@@ -3,13 +3,12 @@ from datetime import datetime
 
 from influxdb_client import InfluxDBClient, Point, WritePrecision
 from influxdb_client.client.write_api import SYNCHRONOUS
+from private_info import token
+from private_info import org
+from private_info import bucket
+from private_info import DB_url
 
-# You can generate a Token from the "Tokens Tab" in the UI
-token = "ze0ElzHkrPlZsXUUeG_UCiRZRtdG3IAVWLSN7RRgFKUhJqQjmRrO_J0Oh8sFi9dehPpx8QjJ3ff_bnjndK_Ulg=="
-org = "cvs"
-bucket = "localdatadb2"
-
-client2 = InfluxDBClient(url="http://localhost:8086", token=token)
+client2 = InfluxDBClient(url=DB_url, token=token)
 
 write_api = client2.write_api(write_options=SYNCHRONOUS)
 
