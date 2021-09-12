@@ -1,5 +1,4 @@
 FROM python:3
-
 # Below is executed to create the image
 WORKDIR /usr/src/app
 
@@ -10,4 +9,4 @@ COPY *.py .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Below is executed at the start of the container from the image
-# CMD ["python", "hallo.py"]
+CMD ["python", "dockerweather.py"]

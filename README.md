@@ -1,5 +1,5 @@
 # Home Automation Project 
-(HUE, INFLUXDB, SOLARPANEL, GRAFANA)
+(HUE, INFLUXDB, SOLARPANEL, GRAFANA, DOCKER, DOCKER COMPOSE)
 ### Get live data from the following sources:
 * City weather data using openweathermap api
 * Hue light sensor data
@@ -10,4 +10,5 @@
 ### Output is visualized using Grafana
 
 ### Working on: 
-* Publishing all via Docker Containers for InfluxDB, Python & Grafana
+* Publishing all via Docker Containers for InfluxDB, (Python) & Grafana
+* Issue with Hue bridge and python code in a docker (needs to authenticate every time)
