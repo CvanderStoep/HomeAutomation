@@ -39,7 +39,7 @@ if __name__ == '__main__':
 
     # connect to hue bridge
     bridge = initbridge()
-
+    print(bridge.username)
     while True:
         # get outside weather data from the various cities using open weather site
         data_point = []

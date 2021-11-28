@@ -1,7 +1,7 @@
 version: '3'
 
 services:
-#Define influxDB service (version 1.8)
+#Define influxDB service
   influxDB:
     image: influxdb:1.8
     container_name: influxDB
@@ -13,26 +13,24 @@ services:
 
 #Define grafana service
   grafana:
+    image: grafana/grafana:7.5.2
     container_name: "grafana"
-    image: grafana/grafana:latest
     restart: always
     ports:
     - 3000:3000
     volumes:
     - grafana:/var/lib/grafana
 
-#Define realtimemonitoring of weather
-  dockerweather:
-    container_name: "dockerweather"
+#Define realtime monitoring service (python code)
+  realtimemonitoring:
+    container_name: "realtimemonitoring"
     build: .
-#      dockerfile: Dockerfile
     depends_on:
       - "grafana"
       - "influxDB"
     stdin_open: true
     tty: true
-#    volumes:
-#      - realtime:/usr/src/app
+
 
 volumes:
   influxdb:
@@ -43,9 +41,6 @@ volumes:
     external: true
   grafana:
     external: true
-  realtime:
-#    external: true
-
 
 
 

@@ -6,9 +6,8 @@
 * Hue temperature sensor data
 * Solarpanel data from Inverter
 
-### Output is send to InfluxDB
-### Output is visualized using Grafana
+### Output is send to InfluxDB (inside a Docker Container)
+### Output is visualized using Grafana (inside a Docker Container)
+### Realtime monitoring runs inside a Docker Container
 
-### Working on: 
-* Publishing all via Docker Containers for InfluxDB, (Python) & Grafana
-* Issue with Hue bridge and python code in a docker (needs to authenticate every time)
+###start the Containers: docker compose up --build
